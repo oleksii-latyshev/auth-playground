@@ -8,6 +8,7 @@ import { AccountService } from '../account/account.service';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import * as argon2 from 'argon2';
+import { AuthProviders } from 'src/modules/auth/enums';
 
 @Injectable()
 export class AuthService {
@@ -30,8 +31,7 @@ export class AuthService {
     });
 
     await this.accountService.create({
-      provider: 'credential',
-      providerId: user.id,
+      provider: AuthProviders.CREDENTIAL,
       password: hashedPassword,
       user: {
         connect: {

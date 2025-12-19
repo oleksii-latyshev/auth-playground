@@ -35,12 +35,4 @@ export class AccountService {
       provider: 'credential',
     });
   }
-
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    return `This action updates a #${id} account`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} account`;
-  }
 }
