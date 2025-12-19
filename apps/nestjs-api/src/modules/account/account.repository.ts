@@ -10,14 +10,18 @@ export class AccountRepository {
     return this.prisma.account.findUnique({ where });
   }
 
-  findAll(params: {
+  findFirst(where: Prisma.AccountWhereInput) {
+    return this.prisma.account.findFirst({ where });
+  }
+
+  findAll(params?: {
     skip?: number;
     take?: number;
     cursor?: Prisma.AccountWhereUniqueInput;
     where?: Prisma.AccountWhereInput;
     orderBy?: Prisma.AccountOrderByWithRelationInput;
   }) {
-    const { skip, take, cursor, where, orderBy } = params;
+    const { skip, take, cursor, where, orderBy } = params || {};
     return this.prisma.account.findMany({
       skip,
       take,

@@ -1,19 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
+import { AccountRepository } from 'src/modules/account/account.repository';
+import { Prisma } from 'generated/prisma/client';
 
 @Injectable()
 export class AccountService {
-  create(createAccountDto: CreateAccountDto) {
-    return 'This action adds a new account';
+  constructor(private readonly accountRepository: AccountRepository) {}
+
+  create(data: Prisma.AccountCreateInput) {
+    return this.accountRepository.create(data);
   }
 
   findAll() {
-    return `This action returns all account`;
+    return this.accountRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} account`;
+  findOne(id: string) {
+    return this.accountRepository.findOne({
+      id,
+    });
+  }
+
+  findByProvider(provider: string, providerId: string) {
+    return this.accountRepository.findOne({
+      provider_providerId: {
+        provider,
+        providerId,
+      },
+    });
+  }
+
+  findCredentialAccountByUserId(userId: string) {
+    return this.accountRepository.findFirst({
+      userId,
+      provider: 'credential',
+    });
   }
 
   update(id: number, updateAccountDto: UpdateAccountDto) {

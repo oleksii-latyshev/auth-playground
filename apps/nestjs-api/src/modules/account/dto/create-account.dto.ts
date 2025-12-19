@@ -1,1 +1,9 @@
-export class CreateAccountDto {}
+import { IsEmail, IsNotEmpty } from 'class-validator';
+
+export class CreateAccountDto {
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  password: string;
+}
