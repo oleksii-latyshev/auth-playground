@@ -3,31 +3,34 @@ import {
   UnauthorizedException,
   ConflictException,
 } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { AccountService } from '../account/account.service';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
-import * as argon2 from 'argon2';
+
+import { AccountService } from 'src/modules/account/account.service';
+import { SignInDto } from 'src/modules/auth/dto/sign-in.dto';
+import { SignUpDto } from 'src/modules/auth/dto/sign-up.dto';
 import { AuthProviders } from 'src/modules/auth/enums';
+import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { UserService } from 'src/modules/user/user.service';
+import { HashService } from 'src/shared/services/hash.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly accountService: AccountService,
+    private readonly hashService: HashService,
   ) {}
 
-  async signUp(dto: SignUpDto) {
-    const existingUser = await this.userService.findByEmail(dto.email);
+  async signUp({ name, email, password }: SignUpDto): Promise<UserEntity> {
+    const existingUser = await this.userService.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
-    const hashedPassword = await argon2.hash(dto.password);
+    const hashedPassword = await this.hashService.hash(password);
 
     const user = await this.userService.create({
-      email: dto.email,
-      name: dto.name,
+      email,
+      name,
     });
 
     await this.accountService.create({
@@ -40,10 +43,10 @@ export class AuthService {
       },
     });
 
-    return user;
+    return new UserEntity(user);
   }
 
-  async signIn(dto: SignInDto) {
+  async signIn(dto: SignInDto): Promise<UserEntity> {
     const user = await this.userService.findByEmail(dto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -56,11 +59,14 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials or no password set');
     }
 
-    const isPasswordValid = await argon2.verify(account.password, dto.password);
+    const isPasswordValid = await this.hashService.verify(
+      account.password,
+      dto.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return user;
+    return new UserEntity(user);
   }
 }
