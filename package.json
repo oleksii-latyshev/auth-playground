@@ -1,12 +1,10 @@
 {
-  "dependencies": {
-    "@nestjs/mapped-types": "*"
-  },
   "name": "auth-playground",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "nest:dev": "turbo run start:dev --filter=nestjs-api",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
