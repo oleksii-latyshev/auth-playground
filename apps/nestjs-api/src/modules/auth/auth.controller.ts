@@ -9,6 +9,10 @@ import { UserEntity } from 'src/modules/user/entities/user.entity';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  jwtSignUp(@Body() dto: SignUpDto): Promise<{ token: string }> {
+    return this.authService.jwtSignUp(dto);
+  }
+
   @Post('sign-up')
   @ApiOperation({ summary: 'User Sign Up' })
   @ApiResponse({
