@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { IS_DEV } from 'src/shared/constants';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.guard';
+import { RedisModule } from 'src/core/redis/redis.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.guard';
     AccountModule,
     AuthModule,
     UserModule,
+    RedisModule,
   ],
   providers: [
     {
