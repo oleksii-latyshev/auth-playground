@@ -18,3 +18,5 @@ export const TIME_IN_SECONDS = {
   hour: 60 * 60,
   day: 60 * 60 * 24,
 } as const;
+
+export const SERVICE_NAME = 'nestjs-api';
