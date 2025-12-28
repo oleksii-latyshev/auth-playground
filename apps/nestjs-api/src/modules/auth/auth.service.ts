@@ -3,7 +3,6 @@ import {
   UnauthorizedException,
   ConflictException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
 import { AccountService } from 'src/modules/account/account.service';
 import { SignInDto } from 'src/modules/auth/dto/sign-in.dto';
@@ -13,7 +12,7 @@ import { JwtAuthResponseEntity } from 'src/modules/auth/entities/jwt-auth-respon
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { UserService } from 'src/modules/user/user.service';
 import { HashService } from 'src/shared/services/hash.service';
-import { JwtAuthResponse } from 'src/modules/auth/types';
+import { JwtService } from 'src/modules/auth/modules/jwt/jwt.service';
 
 @Injectable()
 export class AuthService {
@@ -74,15 +73,14 @@ export class AuthService {
     return new UserEntity(user);
   }
 
-  async jwtSignUp(dto: SignUpDto): Promise<JwtAuthResponse> {
+  async jwtSignUp(dto: SignUpDto): Promise<JwtAuthResponseEntity> {
     const { id, email } = await this.signUp(dto);
 
-    const payload = { sub: id, email: email };
+    const tokens = await this.jwtService.generatePair({
+      sub: id,
+      email,
+    });
 
-    const {} = await this.jwtService.signAsync(payload);
-
-    const tokens = new JwtAuthResponseEntity({});
-
-    return tokens;
+    return new JwtAuthResponseEntity(tokens);
   }
 }

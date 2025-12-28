@@ -1,15 +1,17 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
+
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
+import { JwtAuthResponseEntity } from 'src/modules/auth/entities/jwt-auth-response.model';
+import { SignUpDto } from 'src/modules/auth/dto/sign-up.dto';
+import { SignInDto } from 'src/modules/auth/dto/sign-in.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  jwtSignUp(@Body() dto: SignUpDto): Promise<{ token: string }> {
+  jwtSignUp(@Body() dto: SignUpDto): Promise<JwtAuthResponseEntity> {
     return this.authService.jwtSignUp(dto);
   }
 
