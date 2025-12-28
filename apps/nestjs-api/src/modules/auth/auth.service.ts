@@ -83,4 +83,25 @@ export class AuthService {
 
     return new JwtAuthResponseEntity(tokens);
   }
+
+  async jwtSignIn(dto: SignInDto): Promise<JwtAuthResponseEntity> {
+    const { id, email } = await this.signIn(dto);
+
+    const tokens = await this.jwtService.generatePair({
+      sub: id,
+      email,
+    });
+
+    return new JwtAuthResponseEntity(tokens);
+  }
+
+  async jwtAuthMe(userId: string): Promise<UserEntity> {
+    const user = await this.userService.findOne(userId);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return new UserEntity(user);
+  }
 }
